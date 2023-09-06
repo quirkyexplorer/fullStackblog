@@ -1,6 +1,6 @@
 
 const express = require('express')
-const app = express()
+const app = require("./app");
 const cors = require('cors')
 const routes = require("./controllers/Routes");
 const middleware = require("./utils/middleware");
@@ -9,29 +9,7 @@ const config = require("./utils/config");
 const mongoose = require('mongoose')
 mongoose.set("strictQuery", false);
 
-const mongoUrl = config.MONGODB_URI;
-
-logger.info("connecting to", mongoUrl);
-
-mongoose.connect(mongoUrl,{ 
-    useNewUrlParser: true, 
-    useUnifiedTopology: true 
-}).then(() => {
-  logger.info("connected to MongoDB");
-}).catch((error) => {
-  logger.error("error connecting to MongoDB", error.message);
-});
-
-
-app.use(cors());
-app.use(express.static("build"));
-app.use(express.json());
-app.use(middleware.requestLogger);
-app.use("/api/blogs", routes);
-
 const PORT = config.PORT;
 app.listen(PORT, () => {
-  logger.info(`Server running on port ${config.PORT}`)
+  logger.info(`Server running on port ${PORT}`);
 });
-app.use(middleware.unknownEndpoint);
-app.use(middleware.errorHandler);
