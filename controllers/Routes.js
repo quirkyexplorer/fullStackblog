@@ -26,9 +26,9 @@ blogsRouter.get("/:id", async (request, response, next) => {
 blogsRouter.post("/", async (request, response, next) => {
   const body = request.body;
 
-  if (!body.title ) {
+  if (!body.title || !body.url) {
     response.status(400).json({
-      error: "title missing",
+      error: "title or url missing",
     });
   }
 
@@ -55,5 +55,23 @@ blogsRouter.delete("/:id", async (request, response, next) => {
     next(exception);
   }
 });
+
+blogsRouter.patch("/:id", async (request, response, next) => {
+    
+    try {
+        const updatedBlog = await Blog.findOneAndUpdate(
+            { _id: request.params.id}, 
+            request.body, 
+            {new : true}
+            );
+        if ( !updatedBlog) {
+            return response.status(404).json({ message: 'Blog not found' });
+        }
+        return response.json({ message: 'Blog updated successfully', resource: updatedBlog });
+
+    } catch (exception) {
+        next(exception);
+    }
+}) 
 
 module.exports = blogsRouter;

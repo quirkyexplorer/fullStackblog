@@ -88,14 +88,21 @@ test("a valid blog can be added", async () => {
   expect(titles).toContain("hola que tal");
 });
 
-test("a blog without title is not added", async () => {
+test("a blog without title or url is not added", async () => {
   const newBlog = {
     author: "daniel",
     url: "http://www.cs.utexas.edu/~EWD/transcriptions/EWD08xx/EWD808.html",
     likes: 12,
   };
 
+  const newBlog2 = {
+    title: "come on bro",
+    author: "daniel",
+    likes: 12,
+  };
+
   await api.post("/api/blogs").send(newBlog).expect(400);
+  await api.post("/api/blogs").send(newBlog2).expect(400);
 
   const blogsAtEnd = await helper.blogsInDb();
 
@@ -103,7 +110,7 @@ test("a blog without title is not added", async () => {
 });
 
 
-test("create a blog with no likes property, likes default to 0", async () => {
+test("creating a blog with no likes property defaults likes to 0", async () => {
     const newBlog = {
         title: "example",
         author: "daniel",
@@ -119,6 +126,29 @@ test("create a blog with no likes property, likes default to 0", async () => {
     
     expect(blogsAtEnd[blogsAtEnd.length - 1].likes).toEqual(0);
 })
+
+test("increases the number of likes of a post by 1", async () => {
+
+    const blogsAtStart = await helper.blogsInDb();
+    const likesStart  = blogsAtStart[blogsAtStart.length - 1].likes;
+    const blogId = blogsAtStart[blogsAtStart.length - 1]._id.toHexString();
+
+    const increaseLikes = () => likesStart + 1;
+
+    const addLikes = {
+        likes: increaseLikes()
+    }
+
+    await api
+    .patch(`/api/blogs/${blogId}`)
+    .send(addLikes)
+    .expect(200)
+
+    const blogsAtEnd = await helper.blogsInDb();
+    const likesEnd  = blogsAtEnd[blogsAtEnd.length - 1].likes;
+    
+    expect(likesStart).toEqual(likesEnd-1);
+}) 
 
 afterAll(async () => {
   await mongoose.connection.close();
