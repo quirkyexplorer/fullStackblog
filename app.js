@@ -2,6 +2,7 @@ const express = require('express')
 const app = express();
 require("express-async-errors"); // this library removes all the try and catch 
 const cors = require('cors');
+const usersRouter = require('./controllers/users');
 const routes = require("./controllers/Routes");
 const middleware = require("./utils/middleware");
 const logger = require("./utils/logger");
@@ -26,6 +27,7 @@ app.use(cors());
 app.use(express.static("build"));
 app.use(express.json());
 app.use(middleware.requestLogger);
+app.use("/api/users", usersRouter);
 app.use("/api/blogs", routes);
 app.use(middleware.unknownEndpoint);
 app.use(middleware.errorHandler);
