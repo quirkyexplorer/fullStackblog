@@ -1,10 +1,10 @@
 
-export default function AddBlog() {
+export default function BlogForm() {
 
     return (
         <div>
             <h3>New Blog</h3>
-            <form onSubmit={'addname'}>
+            <form onSubmit={'addBlog'}>
                 <div>
                     title: <input placeholder="min" value={'title'} onChange={'handleTitleChange'}/>
                 </div>

@@ -2,7 +2,7 @@ import { useState, useEffect} from 'react';
 import Blog from './components/ViewBlog.js';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
-import AddBlog from './components/AddBlog.js';
+import BlogForm from './components/BlogForm.js';
 import login from './services/login.js';
 
 function App() {
@@ -83,16 +83,11 @@ function App() {
         </form>
     );
 
-    // const blogForm = () => (
-    //     //FIX ME  - add a way to add blogs and handle the change
-    //     <form onSubmit={'addBlog'}>
-    //         <input
-    //             value={'newBlog'}
-    //             onChange={'handleBlogChange'}
-    //         />
-    //         <button type='submit'>save</button>
-    //     </form>
-    // );
+    const addBlog = () => {}
+
+    
+
+    // FIX ME add functions to handle changes in input and finish functionality for new blogs
 
   return (
    <div>
@@ -106,12 +101,15 @@ function App() {
           :
           <div>
             <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
-
-    
-
-
-            <AddBlog
-                
+            
+            <BlogForm
+              newTitle={'title'}
+              handleTitleChange={'handleTitleChange'}
+              author={'author'}
+              handleAuthorChange={'handleAuthorChange'}
+              url={'url'}
+              handleURlChange={'handleURLChange'}
+              addBlog={'addBlog'}
             />
             {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
 
