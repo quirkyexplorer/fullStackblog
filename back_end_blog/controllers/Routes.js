@@ -50,9 +50,9 @@ blogsRouter.post("/", async (request, response, next) => {
 
     const user = await User.findById(decodedToken.id);
     
-    if (!body.title || !body.url) {
+    if (!body.title || !body.url || !body.author) {
         response.status(400).json({
-        error: "title or url missing",
+        error: "title, author or url missing",
         });
     }
 

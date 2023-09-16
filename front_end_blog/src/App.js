@@ -1,7 +1,8 @@
 import { useState, useEffect} from 'react';
-import Blog from './components/Blog.js';
+import Blog from './components/ViewBlog.js';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
+import AddBlog from './components/AddBlog.js';
 import login from './services/login.js';
 
 function App() {
@@ -82,16 +83,16 @@ function App() {
         </form>
     );
 
-    const blogForm = () => (
-        //FIX ME  - add a way to add blogs and handle the change
-        <form onSubmit={'addBlog'}>
-            <input
-                value={'newBlog'}
-                onChange={'handleBlogChange'}
-            />
-            <button type='submit'>save</button>
-        </form>
-    );
+    // const blogForm = () => (
+    //     //FIX ME  - add a way to add blogs and handle the change
+    //     <form onSubmit={'addBlog'}>
+    //         <input
+    //             value={'newBlog'}
+    //             onChange={'handleBlogChange'}
+    //         />
+    //         <button type='submit'>save</button>
+    //     </form>
+    // );
 
   return (
    <div>
@@ -106,10 +107,12 @@ function App() {
           <div>
             <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
 
-            {blogForm()}
+    
 
 
-
+            <AddBlog
+                
+            />
             {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
 
           </div>
