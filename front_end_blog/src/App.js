@@ -6,6 +6,7 @@ import login from './services/login.js';
 
 function App() {
     const [blogs, setBlogs] = useState([]);
+    const [newBlog, setNewBlog] = useState('');
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
@@ -17,14 +18,27 @@ function App() {
         );  
     }, []);
 
+    useEffect(() => {
+        const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
+        if(loggedUserJSON) {
+            const user = JSON.parse(loggedUserJSON);
+            setUser(user);
+            blogService.setToken(user.token);
+        }
+    }, []);
+
     const handleLogin = async (event) => {
         event.preventDefault();
-
         try {
             const user = await loginService.login({
                 username, password,
             })
 
+            window.localStorage.setItem(
+                'loggedBlogappUser', JSON.stringify(user)
+            )
+
+            blogService.setToken(user.token);
             setUser(user);
             setUsername('');
             setPassword('');
@@ -33,11 +47,13 @@ function App() {
             setTimeout(() => {
                 setErrorMessage(null);
             }, 5000);
-
         }
+    };
 
-        console.log('logging in with', username, password);
-    }
+    const handleLogout = async (event) => {
+        window.localStorage.clear(); 
+        window.location.reload();
+    };
 
     const loginForm = () => (
         <form onSubmit={handleLogin}>
@@ -79,18 +95,28 @@ function App() {
 
   return (
    <div>
-        <h2>blogs</h2>
+        <h2>Blogs</h2>
 
-        {user === null ?
-          loginForm() :
+        {user === null ? 
+        <div>
+          <h2>User Login</h2>
+          {loginForm()} 
+        </div>  
+          :
           <div>
-            <p>{user.name} logged in</p>
+            <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
+
             {blogForm()}
+
+
+
+            {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
+
           </div>
           }
         
         
-        {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
+        
    </div>
   );
 }
