@@ -7,8 +7,11 @@ const helper = require("./test_helper");
 
 // a user can be created and then be able to login
 // a user has to login first before being able to post 
-// a user without a login token is unable to post
-// 
+// a user without being logged in is unable to post
+// a user can be deleted
+// a user can create their own blogs
+// a user can delete their own blogs
+// a user cannot delete another users blogs.
 
 
 
@@ -43,22 +46,23 @@ describe('when there is initially one user in db', () => {
 
     });
 
-    // test('creation fails with proper statuscode and message if username is already taken', async () => {
-    //     const usersAtStart = await helper.usersInDb();
+    test('creation fails with proper statuscode and message if username is already taken', async () => {
+        const usersAtStart = await helper.usersInDb();
 
-    //     const newUser = {
-    //         username: 'root',
-    //         name: 'Superuser',
-    //         password: 'salainen'
-    //     }
+        const newUser = {
+            username: 'Daniel',
+            name: 'daniel',
+            password: 'salainen'
+        }
 
-    //     const result = await api
-    //       .post('/api/users')
-    //       .send(newUser)
-    //       .expect(400)
-    //       .expect('Content-Type', /application\/json/)
+        const result = await api
+          .post('/api/users')
+          .send(newUser)
+          .expect(400)
+          .expect('Content-Type', /application\/json/)
 
-    //     expect(result.body.error).toContain('expected `username` to be unique')
-    // });
+        expect(result.body.error).toContain('expected `username` to be unique')
+    });
+
 
 });

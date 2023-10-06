@@ -7,7 +7,7 @@
     "start": "cross-env NODE_ENV=production node index.js",
     "dev": "cross-env NODE_ENV=development nodemon index.js",
     "lint": "eslint .",
-    "test": "cross-env NODE_ENV=test jest --verbose --runInBand"
+    "test": "cross-env NODE_ENV=test jest --watchAll --verbose --runInBand "
   },
   "author": "",
   "license": "ISC",

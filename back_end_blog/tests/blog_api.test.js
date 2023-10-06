@@ -5,6 +5,11 @@ const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
 
+// a blog can only be created by a logged in user
+// in order to view a blog, a user must be logged in
+// in order to delete a blog , user needs to be the owner
+
+
 beforeEach(async () => {
   await Blog.deleteMany({});
 
@@ -22,7 +27,7 @@ test("blogs are returned as json", async () => {
     .expect("Content-Type", /application\/json/);
 }, 100000);
 
-test("all notes are returned", async () => {
+test("all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
