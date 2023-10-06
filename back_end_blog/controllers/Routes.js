@@ -43,19 +43,19 @@ blogsRouter.post("/", async (request, response, next) => {
 
   try {
 
-    const decodedToken = jwt.verify( token , process.env.SECRET)
+    const decodedToken = jwt.verify( token , process.env.SECRET);
     if (!decodedToken.id) {
-        return response.status(401).json({ error: 'token invalid' })
+        return response.status(401).json({ error: 'token invalid' });
     }
 
-    const user = await User.findById(decodedToken.id);
-    
     if (!body.title || !body.url || !body.author) {
         response.status(400).json({
         error: "title, author or url missing",
         });
     }
 
+    const user = await User.findById(decodedToken.id);
+    
     const blog = new Blog({
         title: body.title,
         author: body.author,
