@@ -13,8 +13,6 @@ const helper = require("./test_helper");
 // a user can delete their own blogs
 // a user cannot delete another users blogs.
 
-
-
 beforeEach(async () => {
         await User.deleteMany({});
         const passwordHash = await bcrypt.hash('sekret', 10);
@@ -63,6 +61,5 @@ describe('when there is initially one user in db', () => {
 
         expect(result.body.error).toContain('expected `username` to be unique')
     });
-
 
 });
