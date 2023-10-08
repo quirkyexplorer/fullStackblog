@@ -4,16 +4,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 middleware = require("../utils/middleware");
 
-// the try and catch are kept for reference
-// even thou they can be removed since the express-async-errors library is installed as dependency
-
-// const getTokenFrom = request => {
-//     const authorization = request.get('authorization');
-//     if (authorization && authorization.startsWith('Bearer ')) {
-//         return authorization.replace('Bearer ','');
-//     }
-//     return null
-// }
 
 blogsRouter.use(middleware.userExtractor);
 
@@ -37,12 +27,12 @@ blogsRouter.get("/:id", async (request, response, next) => {
 });
 
 blogsRouter.post("/", async (request, response, next) => {
-    const {body, token} = request;
+    const {body, token, user} = request;
 
   try {
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id) {
-      return response.status(401).json({ error: "token invalid" });
+      return response.status(401).json({ error: "token invalid or missing" });
     }
 
     if (!body.title || !body.url || !body.author) {
@@ -51,21 +41,24 @@ blogsRouter.post("/", async (request, response, next) => {
       });
     }
 
-    const user = await User.findById(decodedToken.id);
+    if(user.blogs.includes(request.params.id)) {
+        const user = await User.findById(decodedToken.id);
 
-    const blog = new Blog({
-      title: body.title,
-      author: body.author,
-      url: body.url,
-      likes: !body.likes ? 0 : body.likes,
-      user: user.id,
-    });
+        const blog = new Blog({
+        title: body.title,
+        author: body.author,
+        url: body.url,
+        likes: !body.likes ? 0 : body.likes,
+        user: user.id,
+        });
 
-    const result = await blog.save();
-    user.blogs = user.blogs.concat(result._id);
-    await user.save();
+        const result = await blog.save();
+        user.blogs = user.blogs.concat(result._id);
+        await user.save();
 
-    response.status(201).json(result);
+        response.status(201).json(result);
+    }
+    
   } catch (exception) {
     next(exception);
   }
@@ -78,7 +71,7 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id) {
-      return response.status(401).json({ error: "token invalid" });
+      return response.status(401).json({ error: "token invalid or missing" });
     }
     
     const blog = await Blog.findById(request.params.id);
