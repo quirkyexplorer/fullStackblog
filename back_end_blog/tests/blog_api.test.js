@@ -20,39 +20,39 @@ beforeEach(async () => {
   await Promise.all(promiseArray);
 });
 
-test("blogs are returned as json", async () => {
+it("knows blogs are returned as json", async () => {
   await api
     .get("/api/blogs")
     .expect(200)
     .expect("Content-Type", /application\/json/);
 }, 100000);
 
-test("all blogs are returned", async () => {
+it("knows all blogs are returned", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
-test("a specific blog is within the return blogs", async () => {
+it("knows a specific blog is within the return blogs", async () => {
   const response = await api.get("/api/blogs");
 
   const title = response.body.map((r) => r.title);
   expect(title).toContain("Go To Statement Considered Harmful");
 });
 
-test("a specific blog can be viewed", async () => {
+it("tests if a specific blog can be viewed", async () => {
   const blogsAtStart = await helper.blogsInDb();
 
   const blogToView = blogsAtStart[0];
-  // console.log(blogToView);
-  // console.log(blogsAtStart[0]);
+  console.log(blogToView.id);
+  
   const resultBlog = await api
-    .get(`/api/blogs/${blogToView._id}`)
+    .get(`/api/blogs/${blogToView.id}`)
     .expect(200)
     .expect("Content-Type", /application\/json/);
+    console.log('result', resultBlog.body.id);
+    console.log('blogtoview', blogToView.id);
 
-  //const processedBlogToView = JSON.parse(JSON.stringify(blogToView))
-
-  expect(resultBlog.body._id).toEqual(blogToView._id.toHexString());
+  expect(resultBlog.body.id).toEqual(blogToView.id);
 });
 
 test("a blog can be deleted", async () => {
@@ -60,8 +60,8 @@ test("a blog can be deleted", async () => {
 
   const blogToDelete = blogsAtStart[0];
 
-  console.log(blogToDelete._id);
-  await api.delete(`/api/blogs/${blogToDelete._id}`).expect(204);
+//   console.log(blogToDelete._id);
+  await api.delete(`/api/blogs/${blogToDelete.id}`).expect(204);
 
   const blogsAtEnd = await helper.blogsInDb();
 
@@ -136,7 +136,7 @@ test("increases the number of likes of a post by 1", async () => {
 
     const blogsAtStart = await helper.blogsInDb();
     const likesStart  = blogsAtStart[blogsAtStart.length - 1].likes;
-    const blogId = blogsAtStart[blogsAtStart.length - 1]._id.toHexString();
+    const blogId = blogsAtStart[blogsAtStart.length - 1].id.toHexString();
 
     const increaseLikes = () => likesStart + 1;
 
