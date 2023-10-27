@@ -103,6 +103,11 @@ blogsRouter.delete("/:id", async (request, response, next) => {
 
 blogsRouter.patch("/:id", async (request, response, next) => {
   try {
+    const decodedToken = jwt.verify(getTokenFrom(request), process.env.SECRET);
+    if (!decodedToken.id) {
+      return response.status(401).json({ error: "token invalid or missing" });
+    }
+
     const updatedBlog = await Blog.findOneAndUpdate(
       { _id: request.params.id },
       request.body,
