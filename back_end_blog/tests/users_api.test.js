@@ -16,7 +16,7 @@ const helper = require("./test_helper");
 beforeEach(async () => {
         await User.deleteMany({});
         const passwordHash = await bcrypt.hash('sekret', 10);
-        const user  = new User({username: 'Daniel', passwordHash });
+        const user  = new User({username: 'test', passwordHash }); // to test duplicate username
         await user.save();
     })
 
@@ -48,7 +48,7 @@ describe('when there is initially one user in db', () => {
         const usersAtStart = await helper.usersInDb();
 
         const newUser = {
-            username: 'Daniel',
+            username: 'test',
             name: 'daniel',
             password: 'salainen'
         }
@@ -59,7 +59,9 @@ describe('when there is initially one user in db', () => {
           .expect(400)
           .expect('Content-Type', /application\/json/)
 
-        expect(result.body.error).toContain('expected `username` to be unique')
+          console.log(result);
+
+        expect(result.body.error).toContain("username must be unique")
     });
 
 });
