@@ -144,19 +144,15 @@ function App() {
             
                 <input id='searchBox' placeholder='search'/>
 
-            
+            <div id='loginForm'>
+                {loginForm()} 
+            </div>  
             
         </div>
 
-        {user === null ? 
-        <div>
-          <h2>User Login</h2>
-          {loginForm()} 
-        </div>  
-          :
+        {user ? 
           <div>
-            <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
-            
+            <button onClick={handleLogout}>logout</button> 
             <BlogForm
               title={title}
               handleTitleChange={handleTitleChange}
@@ -169,7 +165,7 @@ function App() {
             {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
 
           </div>
-          }
+          : null }
         
         
         
