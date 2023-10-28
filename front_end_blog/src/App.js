@@ -3,7 +3,9 @@ import Blog from './components/ViewBlog.js';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
 import BlogForm from './components/BlogForm.js';
+import LoginForm from './components/LoginForm.js';
 import login from './services/login.js';
+
 
 function App() {
     const [blogs, setBlogs] = useState([]);
@@ -12,6 +14,31 @@ function App() {
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null)
+    const [loginVisible, setLoginVisible] = useState(false);
+
+    const [title, setTitle]= useState('');
+    const [author, setAuthor]= useState('');
+    const [url, setUrl]= useState('');
+    const [likes, setLikes]= useState(0);
+    
+    const handleTitleChange = (event) => {
+        event.preventDefault();
+        console.log(event.target.value);
+        setTitle(event.target.value);
+    }
+
+    const handleAuthorChange = (event) => {
+        event.preventDefault();
+        console.log(event.target.value);
+        setAuthor(event.target.value);
+    }
+
+    const handleUrlChange =(event) => {
+        event.preventDefault();
+        console.log(event.target.value);
+        setUrl(event.target.value);
+    }
+
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -27,6 +54,9 @@ function App() {
             blogService.setToken(user.token);
         }
     }, []);
+
+
+
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -56,36 +86,53 @@ function App() {
         window.location.reload();
     };
 
-    const loginForm = () => (
-        <form onSubmit={handleLogin}>
+    const addBlog = async (event) => {
+        event.preventDefault();
+        const newBlogObject = {
+            title,
+            author,
+            url,
+            likes,
+        }
+        try {
+            const createdBlog = await blogService.create(newBlogObject);
+            setBlogs(blogs.concat(createdBlog));
+            setTitle('');
+            setAuthor('');
+            setUrl('');
+            
+            console.log('made it work?')
+        }
+
+        catch(error) {
+            console.log('error', error);
+            setErrorMessage(error);
+        }
+    }
+
+    const loginForm = () =>  {
+        const hideWhenVisible = {display: loginVisible ? 'none' : ''}
+        const showWhenVisible = {display: loginVisible ? '' : 'none'}
+
+        return (
             <div>
-                username
-                <input
-                type='text'
-                value={username}
-                name='username'
-                onChange={({ target }) => { setUsername(target.value)}}
+                <div style={hideWhenVisible}>
+                <button onClick={() => setLoginVisible(true)}>log in</button>
+                </div>
+
+                <div style={showWhenVisible}>
+                <LoginForm
+                    username={username}
+                    password={password}
+                    handleUsernameChange={({ target }) => setUsername(target.value)}
+                    handlePasswordChange={({ target }) => setPassword(target.value)}
+                    handleSubmit={handleLogin}
                 />
+                <button onClick={() => setLoginVisible(false)}>cancel</button>
+                </div>
             </div>
-
-            <div>
-                password
-                <input
-                type='password'
-                value={password}
-                name='password'
-                onChange={({ target }) => { setPassword(target.value)}}
-                />
-            </div>
-
-            <button type='submit'>login</button>
-
-        </form>
-    );
-
-    const addBlog = () => {}
-
-    
+            );
+    }
 
     // FIX ME add functions to handle changes in input and finish functionality for new blogs
 
@@ -103,13 +150,13 @@ function App() {
             <p>{user.name} logged in</p> <button onClick={handleLogout}>logout</button>
             
             <BlogForm
-              newTitle={'title'}
-              handleTitleChange={'handleTitleChange'}
-              author={'author'}
-              handleAuthorChange={'handleAuthorChange'}
-              url={'url'}
-              handleURlChange={'handleURLChange'}
-              addBlog={'addBlog'}
+              title={title}
+              handleTitleChange={handleTitleChange}
+              author={author}
+              handleAuthorChange={handleAuthorChange}
+              url={url}
+              handleUrlChange={handleUrlChange}
+              addBlog={addBlog}
             />
             {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
 
