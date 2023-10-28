@@ -1,0 +1,25 @@
+
+#header {
+    margin-top: 20px;
+    display: flex;
+    align-items: space-between;
+    justify-content: baseline;
+}
+
+.titleWrapper {
+    flex: 1;
+    margin-bottom: 0;
+    margin-left: 20px;
+}
+
+#loginForm {
+    margin-top: 7px;
+    margin-left: 20px;
+    margin-right: 20px;
+}
+
+#searchBox {
+    height: 25px;
+    width: 150px;
+    margin-top: 10px;
+}

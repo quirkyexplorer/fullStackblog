@@ -5,7 +5,7 @@ import loginService from './services/login.js'
 import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
 import login from './services/login.js';
-
+import './App.css';
 
 function App() {
     const [blogs, setBlogs] = useState([]);
@@ -115,7 +115,7 @@ function App() {
         const showWhenVisible = {display: loginVisible ? '' : 'none'}
 
         return (
-            <div>
+            <div >
                 <div style={hideWhenVisible}>
                 <button onClick={() => setLoginVisible(true)}>log in</button>
                 </div>
@@ -134,11 +134,19 @@ function App() {
             );
     }
 
-    // FIX ME add functions to handle changes in input and finish functionality for new blogs
 
   return (
    <div>
-        <h2>Blogs</h2>
+        <div id='header'>
+            <div className='titleWrapper'>
+                <h2 className="test">DevBlogs</h2>
+            </div>
+            
+                <input id='searchBox' placeholder='search'/>
+
+            
+            
+        </div>
 
         {user === null ? 
         <div>
