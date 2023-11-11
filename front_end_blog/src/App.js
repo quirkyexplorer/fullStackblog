@@ -4,6 +4,7 @@ import blogService from './services/blogs.js';
 import loginService from './services/login.js'
 import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
+import Notification from './components/Notification.js';
 import login from './services/login.js';
 import './App.css';
 
@@ -13,7 +14,10 @@ function App() {
     const [username, setUsername] = useState('');
     const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
-    const [errorMessage, setErrorMessage] = useState(null)
+    const [errorMessage, setErrorMessage] = useState({
+      text: "",
+      isError: false
+    });
     const [loginVisible, setLoginVisible] = useState(false);
 
     const [title, setTitle]= useState('');
@@ -23,22 +27,21 @@ function App() {
     
     const handleTitleChange = (event) => {
         event.preventDefault();
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setTitle(event.target.value);
     }
 
     const handleAuthorChange = (event) => {
         event.preventDefault();
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setAuthor(event.target.value);
     }
 
     const handleUrlChange =(event) => {
         event.preventDefault();
-        console.log(event.target.value);
+        // console.log(event.target.value);
         setUrl(event.target.value);
     }
-
 
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -54,9 +57,6 @@ function App() {
             blogService.setToken(user.token);
         }
     }, []);
-
-
-
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -74,9 +74,17 @@ function App() {
             setUsername('');
             setPassword('');
         } catch (exception) {
-            setErrorMessage('Wrong credentials');
+          // exception.response.data.error
+          console.log(exception)
+          setErrorMessage({
+            text: `${exception.response.data.error}`,
+            isError: true    
+          });
             setTimeout(() => {
-                setErrorMessage(null);
+              setErrorMessage({
+                text: '',
+                isError: false    
+              });
             }, 5000);
         }
     };
@@ -100,13 +108,19 @@ function App() {
             setTitle('');
             setAuthor('');
             setUrl('');
-            
-            console.log('made it work?')
         }
-
         catch(error) {
-            console.log('error', error);
-            setErrorMessage(error);
+            setErrorMessage({
+                text: `${error.response.data.error}`,
+                isError: true    
+            });
+            setTimeout(() => {
+              setErrorMessage({
+                  text: "",
+                  isError: false
+              });
+              }, 4000);
+            
         }
     }
 
@@ -134,41 +148,39 @@ function App() {
             );
     }
 
-
   return (
    <div>
         <div id='header'>
             <div className='titleWrapper'>
                 <h2 className="test">DevBlogs</h2>
             </div>
-            
-                <input id='searchBox' placeholder='search'/>
-
-            <div id='loginForm'>
-                {loginForm()} 
-            </div>  
-            
+            <input id='searchBox' placeholder='search'/>
         </div>
+        { errorMessage.text ? <Notification message={errorMessage.text} isError={errorMessage.isError} /> 
+        : undefined }
+          {user === null ? 
+            loginForm() :
+                  <div>
+                    <div>
+                      <p>{user.name} logged in</p>
+                      <button onClick={handleLogout}>logout</button> 
+                    </div>
+                    <BlogForm
+                      title={title}
+                      handleTitleChange={handleTitleChange}
+                      author={author}
+                      handleAuthorChange={handleAuthorChange}
+                      url={url}
+                      handleUrlChange={handleUrlChange}
+                      addBlog={addBlog}
+                    />
 
-        {user ? 
-          <div>
-            <button onClick={handleLogout}>logout</button> 
-            <BlogForm
-              title={title}
-              handleTitleChange={handleTitleChange}
-              author={author}
-              handleAuthorChange={handleAuthorChange}
-              url={url}
-              handleUrlChange={handleUrlChange}
-              addBlog={addBlog}
-            />
-            {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
-
-          </div>
-          : null }
-        
-        
-        
+                    <div>         
+                      <h2>Blogs</h2>         
+                      {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
+                    </div> 
+                  </div> 
+          }
    </div>
   );
 }

@@ -1,10 +1,9 @@
-
 export default function BlogForm(props) {
 
     return (
         <div>
             <h3>New Blog</h3>
-            <form onSubmit={'addBlog'}>
+            <form onSubmit={props.addBlog}>
                 <div>
                     title: <input placeholder="title" value={props.title} onChange={props.handleTitleChange}/>
                 </div>
@@ -17,7 +16,7 @@ export default function BlogForm(props) {
                     Url: <input placeholder="url" value={props.url} onChange={props.handleUrlChange}/>
                 </div>
                 <div>
-                    <button type="submit" onClick={props.addBlog}>save</button>
+                    <button type="submit">save</button>
                 </div>
             </form>
         </div>
