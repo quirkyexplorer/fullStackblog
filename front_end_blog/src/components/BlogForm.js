@@ -3,7 +3,7 @@ export default function BlogForm(props) {
     return (
         <div>
             <h3>New Blog</h3>
-            <form onSubmit={props.addBlog}>
+            <form onSubmit={props.createBlog}>
                 <div>
                     title: <input placeholder="title" value={props.title} onChange={props.handleTitleChange}/>
                 </div>

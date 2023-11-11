@@ -19,30 +19,11 @@ function App() {
       isError: false
     });
     const [loginVisible, setLoginVisible] = useState(false);
-
     const [title, setTitle]= useState('');
     const [author, setAuthor]= useState('');
     const [url, setUrl]= useState('');
     const [likes, setLikes]= useState(0);
     
-    const handleTitleChange = (event) => {
-        event.preventDefault();
-        // console.log(event.target.value);
-        setTitle(event.target.value);
-    }
-
-    const handleAuthorChange = (event) => {
-        event.preventDefault();
-        // console.log(event.target.value);
-        setAuthor(event.target.value);
-    }
-
-    const handleUrlChange =(event) => {
-        event.preventDefault();
-        // console.log(event.target.value);
-        setUrl(event.target.value);
-    }
-
     useEffect(() => {
         blogService.getAll().then(blogs =>
         setBlogs( blogs )
@@ -94,7 +75,7 @@ function App() {
         window.location.reload();
     };
 
-    const addBlog = async (event) => {
+    const createBlog = async (event) => {
         event.preventDefault();
         const newBlogObject = {
             title,
@@ -167,14 +148,13 @@ function App() {
                     </div>
                     <BlogForm
                       title={title}
-                      handleTitleChange={handleTitleChange}
+                      handleTitleChange={({target})=> { setTitle(target.value)}}
                       author={author}
-                      handleAuthorChange={handleAuthorChange}
+                      handleAuthorChange={({target})=> { setAuthor(target.value)}}
                       url={url}
-                      handleUrlChange={handleUrlChange}
-                      addBlog={addBlog}
+                      handleUrlChange={({target})=> { setUrl(target.value)}}
+                      createBlog={createBlog}
                     />
-
                     <div>         
                       <h2>Blogs</h2>         
                       {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
