@@ -1,7 +1,7 @@
 import React from 'react'
 import { useState } from 'react'
 
-export default function Toggable(props) {
+export default function Togglable(props) {
     const [visible, setVisible] = useState(false)
 
     const hideWhenVisible = { display: visible ? 'none' : '' }

@@ -5,23 +5,16 @@ import loginService from './services/login.js'
 import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
 import Notification from './components/Notification.js';
-import login from './services/login.js';
+import Togglable from './components/Togglable.js';
 import './App.css';
 
 function App() {
     const [blogs, setBlogs] = useState([]);
-    const [newBlog, setNewBlog] = useState('');
-    const [username, setUsername] = useState('');
-    const [password, setPassword] = useState('');
     const [user, setUser] = useState(null);
     const [errorMessage, setErrorMessage] = useState({
       text: "",
       isError: false
     });
-    const [loginVisible, setLoginVisible] = useState(false);
-    const [title, setTitle]= useState('');
-    const [author, setAuthor]= useState('');
-    const [url, setUrl]= useState('');
     const [likes, setLikes]= useState(0);
     
     useEffect(() => {
@@ -39,21 +32,17 @@ function App() {
         }
     }, []);
 
-    const handleLogin = async (event) => {
-        event.preventDefault();
+    const handleLogin = async (userObject) => {
+        const { username, password } = userObject;
         try {
             const user = await loginService.login({
                 username, password,
             })
-
             window.localStorage.setItem(
                 'loggedBlogappUser', JSON.stringify(user)
             )
-
             blogService.setToken(user.token);
             setUser(user);
-            setUsername('');
-            setPassword('');
         } catch (exception) {
           // exception.response.data.error
           console.log(exception)
@@ -75,20 +64,10 @@ function App() {
         window.location.reload();
     };
 
-    const createBlog = async (event) => {
-        event.preventDefault();
-        const newBlogObject = {
-            title,
-            author,
-            url,
-            likes,
-        }
+    const createBlog = async (blogObject) => {
         try {
-            const createdBlog = await blogService.create(newBlogObject);
+            const createdBlog = await blogService.create(blogObject);
             setBlogs(blogs.concat(createdBlog));
-            setTitle('');
-            setAuthor('');
-            setUrl('');
         }
         catch(error) {
             setErrorMessage({
@@ -101,30 +80,19 @@ function App() {
                   isError: false
               });
               }, 4000);
-            
         }
     }
 
     const loginForm = () =>  {
-        const hideWhenVisible = {display: loginVisible ? 'none' : ''}
-        const showWhenVisible = {display: loginVisible ? '' : 'none'}
+        
 
         return (
             <div >
-                <div style={hideWhenVisible}>
-                <button onClick={() => setLoginVisible(true)}>log in</button>
-                </div>
-
-                <div style={showWhenVisible}>
-                <LoginForm
-                    username={username}
-                    password={password}
-                    handleUsernameChange={({ target }) => setUsername(target.value)}
-                    handlePasswordChange={({ target }) => setPassword(target.value)}
+                <Togglable buttonLabel='login'>
+                  <LoginForm
                     handleSubmit={handleLogin}
-                />
-                <button onClick={() => setLoginVisible(false)}>cancel</button>
-                </div>
+                  />
+                </Togglable>
             </div>
             );
     }
@@ -146,15 +114,12 @@ function App() {
                       <p>{user.name} logged in</p>
                       <button onClick={handleLogout}>logout</button> 
                     </div>
-                    <BlogForm
-                      title={title}
-                      handleTitleChange={({target})=> { setTitle(target.value)}}
-                      author={author}
-                      handleAuthorChange={({target})=> { setAuthor(target.value)}}
-                      url={url}
-                      handleUrlChange={({target})=> { setUrl(target.value)}}
-                      createBlog={createBlog}
-                    />
+                    <Togglable buttonLabel='new blog'>
+                      <BlogForm        
+                        createBlog={createBlog}
+                      />
+                    </Togglable>
+                    
                     <div>         
                       <h2>Blogs</h2>         
                       {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
