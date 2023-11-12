@@ -23,3 +23,11 @@
     width: 150px;
     margin-top: 10px;
 }
+
+.blogStyle {
+    padding-top: 10px;
+    padding-left: 2px;
+    border: solid;
+    border-width: 1px;
+    margin-bottom: 5px;
+}

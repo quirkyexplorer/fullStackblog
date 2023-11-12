@@ -1,4 +1,4 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, useRef} from 'react';
 import Blog from './components/ViewBlog.js';
 import blogService from './services/blogs.js';
 import loginService from './services/login.js'
@@ -6,6 +6,7 @@ import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
 import Notification from './components/Notification.js';
 import Togglable from './components/Togglable.js';
+import updateLikes from "./services/likes" ;
 import './App.css';
 
 function App() {
@@ -16,6 +17,7 @@ function App() {
       isError: false
     });
     const [likes, setLikes]= useState(0);
+    const blogFormRef = useRef();
     
     useEffect(() => {
         blogService.getAll().then(blogs =>
@@ -31,6 +33,10 @@ function App() {
             blogService.setToken(user.token);
         }
     }, []);
+
+    const handleLikes = async() => {
+      updateLikes();
+    }
 
     const handleLogin = async (userObject) => {
         const { username, password } = userObject;
@@ -65,6 +71,7 @@ function App() {
     };
 
     const createBlog = async (blogObject) => {
+        blogFormRef.current.toggleVisibility();
         try {
             const createdBlog = await blogService.create(blogObject);
             setBlogs(blogs.concat(createdBlog));
@@ -84,8 +91,6 @@ function App() {
     }
 
     const loginForm = () =>  {
-        
-
         return (
             <div >
                 <Togglable buttonLabel='login'>
@@ -114,15 +119,14 @@ function App() {
                       <p>{user.name} logged in</p>
                       <button onClick={handleLogout}>logout</button> 
                     </div>
-                    <Togglable buttonLabel='new blog'>
+                    <Togglable buttonLabel='new blog' ref={blogFormRef}>
                       <BlogForm        
                         createBlog={createBlog}
                       />
                     </Togglable>
-                    
                     <div>         
                       <h2>Blogs</h2>         
-                      {blogs.map( blog => <Blog key={blog.id} blog ={blog}/>)}
+                      {blogs.map( blog => <Blog key={blog.id} blog ={blog} handleLikes={handleLikes}/>)}
                     </div> 
                   </div> 
           }
