@@ -1,15 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import likeService from "../services/likes.js" ;
 
-
-export default function Blog({ blog, handleLikes }) {
+export default function Blog({ blog, deleteBlog }) {
   const [visible, setVisible] = useState(false)
+  const [likes, setLikes]= useState(blog.likes);
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+  const toggleVisibility = () => {
+      setVisible(!visible)
+  }
 
-    const hideWhenVisible = { display: visible ? 'none' : '' }
-    const showWhenVisible = { display: visible ? '' : 'none' }
+  useEffect(() => {
+    // This effect will run whenever the 'likes' state changes
+    likeService.getById(blog.id).then( (temp) => {
+      setLikes(temp.likes)}
+      ); 
+    // You can perform any additional actions here if needed
+  }, [likes]);
 
-    const toggleVisibility = () => {
-        setVisible(!visible)
-    }
+  const handleLikes = async () => {
+    let newLikes = 1;
+    await likeService.updateLikes( blog.id ,{ likes: newLikes});
+    setLikes((prevLikes) => prevLikes + newLikes);
+  }
+
+  
+
+  //  conditionally renders the remove button 
+  const removeButton = () => {
+    const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
+
+    const handleClick = (id) => {
+        deleteBlog(blog.id);
+      }
+      
+    return ( 
+    <div> 
+      { user.username === blog.user.username? 
+      <button onClick={handleClick}>remove</button> : null}
+    </div>
+    );
+  }
+
   return (
     <div className="blogStyle"> 
           <p>
@@ -22,16 +54,16 @@ export default function Blog({ blog, handleLikes }) {
               {blog.url}
             </p>
             <p>
-              {blog.likes}
+              {likes}
               <button onClick={handleLikes}>Like</button>
             </p>
             <p>
               {blog.user.username}
-            </p>      
+            </p>
+              {removeButton()}
           </div>
         </div>  
   )
-    
 }
 
   

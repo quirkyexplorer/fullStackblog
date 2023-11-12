@@ -4,7 +4,6 @@ const Blog = require("../models/blog");
 const User = require("../models/user");
 middleware = require("../utils/middleware");
 
-
 const getTokenFrom = request => {
     const authorization = request.get('authorization')
     if (authorization && authorization.startsWith('Bearer ')) {
@@ -74,7 +73,6 @@ blogsRouter.delete("/:id", async (request, response, next) => {
   const {token, user} = request;
 
   try {
-
     const decodedToken = jwt.verify(token, process.env.SECRET);
     if (!decodedToken.id) {
       return response.status(401).json({ error: "token invalid or missing" });
@@ -94,7 +92,6 @@ blogsRouter.delete("/:id", async (request, response, next) => {
         await Blog.findByIdAndRemove(request.params.id);
         response.status(204).end();
     }
-
 
   } catch (exception) {
     next(exception);
@@ -118,6 +115,35 @@ blogsRouter.patch("/:id", async (request, response, next) => {
     }
     return response.json({
       message: "Blog updated successfully",
+      resource: updatedBlog,
+    });
+  } catch (exception) {
+    next(exception);
+  }
+});
+
+blogsRouter.patch("/:id/like", async (request, response, next) => {
+  try {
+    
+    const blog = await Blog.findById(request.params.id);
+    if (!blog) {
+      return response.status(404).json({ message: "Blog not found" });
+    }
+
+    // Assuming the request body has a 'likes' field representing the number of likes to add
+    const likesToAdd = request.body.likes;
+
+    // Validate the input
+    if (!Number.isInteger(likesToAdd) || likesToAdd < 0) {
+      return response.status(400).json({ error: "Invalid likes value" });
+    }
+
+    // Increase the likes and save the updated blog
+    blog.likes += likesToAdd;
+    const updatedBlog = await blog.save();
+
+    return response.json({
+      message: "Likes updated successfully",
       resource: updatedBlog,
     });
   } catch (exception) {

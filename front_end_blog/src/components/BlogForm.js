@@ -18,7 +18,7 @@ export default function BlogForm({
       setAuthor("");
       setUrl("");
     }
-
+    
     return (
         <div>
             <h3>New Blog</h3>

@@ -6,7 +6,6 @@ import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
 import Notification from './components/Notification.js';
 import Togglable from './components/Togglable.js';
-import updateLikes from "./services/likes.js" ;
 import './App.css';
 
 function App() {
@@ -16,7 +15,6 @@ function App() {
       text: "",
       isError: false
     });
-    const [likes, setLikes]= useState(0);
     const blogFormRef = useRef();
     
     useEffect(() => {
@@ -33,10 +31,6 @@ function App() {
             blogService.setToken(user.token);
         }
     }, []);
-
-    const handleLikes = async() => {
-      updateLikes();
-    }
 
     const handleLogin = async (userObject) => {
         const { username, password } = userObject;
@@ -89,6 +83,15 @@ function App() {
               }, 4000);
         }
     }
+    const deleteBlog = async (id) => {
+      try{
+        console.log('blog to be deleted', id);
+        blogService.blogDelete(id);
+        setBlogs(blogs.filter(blog => blog.id !== id));
+      } catch(error) {
+        console.log('error',error);
+      } 
+    }
 
     const loginForm = () =>  {
         return (
@@ -102,6 +105,7 @@ function App() {
             );
     }
 
+    const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
   return (
    <div>
         <div id='header'>
@@ -126,7 +130,9 @@ function App() {
                     </Togglable>
                     <div>         
                       <h2>Blogs</h2>         
-                      {blogs.map( blog => <Blog key={blog.id} blog ={blog} handleLikes={handleLikes}/>)}
+                      {sortedBlogs.map((blog) => (
+                        <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog}/>
+                      ))}
                     </div> 
                   </div> 
           }
