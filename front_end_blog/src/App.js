@@ -6,7 +6,7 @@ import BlogForm from './components/BlogForm.js';
 import LoginForm from './components/LoginForm.js';
 import Notification from './components/Notification.js';
 import Togglable from './components/Togglable.js';
-import updateLikes from "./services/likes" ;
+import updateLikes from "./services/likes.js" ;
 import './App.css';
 
 function App() {
