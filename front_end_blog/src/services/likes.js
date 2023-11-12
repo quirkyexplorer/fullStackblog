@@ -3,7 +3,7 @@ const baseUrl = 'http://localhost:3003/api/blogs';
 
 const updateLikes = async (id, newObject) => {
   try {
-    console.log('id', id, 'newobject', newObject);
+    // console.log('id', id, 'newobject', newObject);
   const response = await axios.patch(`${ baseUrl}/${id}/like`, newObject);
   return response.data;
   } catch(error) {

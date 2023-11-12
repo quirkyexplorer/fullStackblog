@@ -85,7 +85,7 @@ function App() {
     }
     const deleteBlog = async (id) => {
       try{
-        console.log('blog to be deleted', id);
+        // console.log('blog to be deleted', id);
         blogService.blogDelete(id);
         setBlogs(blogs.filter(blog => blog.id !== id));
       } catch(error) {

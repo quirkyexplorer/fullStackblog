@@ -24,8 +24,6 @@ export default function Blog({ blog, deleteBlog }) {
     setLikes((prevLikes) => prevLikes + newLikes);
   }
 
-  
-
   //  conditionally renders the remove button 
   const removeButton = () => {
     const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
@@ -33,7 +31,7 @@ export default function Blog({ blog, deleteBlog }) {
     const handleClick = (id) => {
         deleteBlog(blog.id);
       }
-      
+
     return ( 
     <div> 
       { user.username === blog.user.username? 
