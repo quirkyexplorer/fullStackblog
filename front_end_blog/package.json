@@ -8,6 +8,7 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.5.0",
+    "prop-types": "^15.8.1",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-scripts": "5.0.1",
@@ -17,7 +18,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "lint": "eslint . --fix"
   },
   "eslintConfig": {
     "extends": [
@@ -42,6 +44,7 @@
     "@types/react-dom": "^18.2.7",
     "@vitejs/plugin-react": "^4.0.3",
     "eslint": "^8.49.0",
+    "eslint-plugin-jest": "^27.6.0",
     "eslint-plugin-react": "^7.33.2",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.3",
