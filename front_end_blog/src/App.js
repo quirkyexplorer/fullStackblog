@@ -11,15 +11,18 @@ import './App.css';
 function App() {
     const [blogs, setBlogs] = useState([]);
     const [user, setUser] = useState(null);
-    const [errorMessage, setErrorMessage] = useState({
+    const [message, setMessage] = useState({
       text: "",
       isError: false
     });
     const blogFormRef = useRef();
     
     useEffect(() => {
-        blogService.getAll().then(blogs =>
-        setBlogs( blogs )
+        blogService
+        .getAll()
+        .then(initialBlogs => {
+          setBlogs( initialBlogs )
+        }
         );  
     }, []);
 
@@ -46,12 +49,12 @@ function App() {
         } catch (exception) {
           // exception.response.data.error
           console.log(exception)
-          setErrorMessage({
+          setMessage({
             text: `${exception.response.data.error}`,
             isError: true    
           });
             setTimeout(() => {
-              setErrorMessage({
+              setMessage({
                 text: '',
                 isError: false    
               });
@@ -64,35 +67,59 @@ function App() {
         window.location.reload();
     };
 
-    const createBlog = async (blogObject) => {
+    console.log('last item',blogs[blogs.length - 1]);
+
+    const createBlog =  async (blogObject) => {
         blogFormRef.current.toggleVisibility();
         try {
             const createdBlog = await blogService.create(blogObject);
+            createdBlog.user = user;
             setBlogs(blogs.concat(createdBlog));
+            setMessage({
+              text: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
+              isError: false    
+            });
+            setTimeout(() => {
+              setMessage({
+                text: '',
+                isError: false    
+              });
+            }, 5000);
         }
         catch(error) {
-            setErrorMessage({
+            setMessage({
                 text: `${error.response.data.error}`,
                 isError: true    
             });
             setTimeout(() => {
-              setErrorMessage({
+              setMessage({
                   text: "",
                   isError: false
               });
               }, 4000);
         }
     }
+
     const deleteBlog = async (id) => {
       try{
         // console.log('blog to be deleted', id);
         blogService.blogDelete(id);
         setBlogs(blogs.filter(blog => blog.id !== id));
+        setMessage({
+          text: `blog deleted`,
+          isError: false    
+        });
+        setTimeout(() => {
+          setMessage({
+            text: '',
+            isError: false    
+          });
+        }, 5000);
       } catch(error) {
         console.log('error',error);
       } 
     }
-
+   
     const loginForm = () =>  {
         return (
             <div >
@@ -106,6 +133,7 @@ function App() {
     }
 
     const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
+
   return (
    <div>
         <div id='header'>
@@ -114,7 +142,7 @@ function App() {
             </div>
             <input id='searchBox' placeholder='search'/>
         </div>
-        { errorMessage.text ? <Notification message={errorMessage.text} isError={errorMessage.isError} /> 
+        { message.text ? <Notification message={message.text} isError={message.isError} /> 
         : undefined }
           {user === null ? 
             loginForm() :

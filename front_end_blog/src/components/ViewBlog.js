@@ -4,6 +4,7 @@ import likeService from "../services/likes.js" ;
 export default function Blog({ blog, deleteBlog }) {
   const [visible, setVisible] = useState(false)
   const [likes, setLikes]= useState(blog.likes);
+  const [user, setUser] = useState('hellow');
   const hideWhenVisible = { display: visible ? 'none' : '' }
   const showWhenVisible = { display: visible ? '' : 'none' }
   const toggleVisibility = () => {
@@ -28,18 +29,22 @@ export default function Blog({ blog, deleteBlog }) {
   const removeButton = () => {
     const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
 
-    const handleClick = (id) => {
+    const handleClick = () => {
+      if (window.confirm(` Please comfirm you want to delete ${blog.title}`)) {
         deleteBlog(blog.id);
+      }
+        
       }
 
     return ( 
     <div> 
+      {/* {console.log('user username',user.username, 'blog username', blog.user.username)} */}
       { user.username === blog.user.username? 
       <button onClick={handleClick}>remove</button> : null}
     </div>
     );
   }
-
+  console.log('user', blog.user);
   return (
     <div className="blogStyle"> 
           <p>
@@ -56,6 +61,7 @@ export default function Blog({ blog, deleteBlog }) {
               <button onClick={handleLikes}>Like</button>
             </p>
             <p>
+              {/* fix me, call the latest user */}
               {blog.user.username}
             </p>
               {removeButton()}

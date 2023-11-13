@@ -59,9 +59,10 @@ blogsRouter.post("/", async (request, response, next) => {
         });
 
         const result = await blog.save();
+        console.log('result', result);
         user.blogs = user.blogs.concat(result._id);
         await user.save();
-
+        console.log('user', user);
         response.status(201).json(result);
     
   } catch (exception) {
