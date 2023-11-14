@@ -98,10 +98,13 @@ function App() {
     }
   };
 
-  const deleteBlog = async (id) => {
+  const deleteBlog = async (id, title) => {
     try{
       // console.log('blog to be deleted', id);
-      blogService.blogDelete(id);
+      if (window.confirm(`Please comfirm you want to delete ${title}`)) {
+        blogService.blogDelete(id);
+      }
+
       setBlogs(blogs.filter(blog => blog.id !== id));
       setMessage({
         text: 'blog deleted',
@@ -157,7 +160,7 @@ function App() {
           <div>
             <h2>Blogs</h2>
             {sortedBlogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog}/>
+              <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} currentUser={user}/>
             ))}
           </div>
         </div>

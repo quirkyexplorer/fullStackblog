@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import likeService from '../services/likes.js' ;
 
-export default function Blog({ blog, deleteBlog }) {
+export default function Blog({ blog, deleteBlog, currentUser }) {
   const [visible, setVisible] = useState(false);
   const [likes, setLikes]= useState(blog.likes);
   const [user, setUser] = useState('hellow');
@@ -27,13 +27,10 @@ export default function Blog({ blog, deleteBlog }) {
 
   //  conditionally renders the remove button
   const removeButton = () => {
-    const user = JSON.parse(window.localStorage.getItem('loggedBlogappUser'));
+    const user = currentUser;
 
     const handleClick = () => {
-      if (window.confirm(` Please comfirm you want to delete ${blog.title}`)) {
-        deleteBlog(blog.id);
-      }
-
+      deleteBlog(blog.id, blog.title);
     };
 
     return (
@@ -46,7 +43,7 @@ export default function Blog({ blog, deleteBlog }) {
   };
 
   return (
-    <div className="blogStyle">
+    <div className="blog">
       <p>
         {blog.title} {blog.author}
         <button onClick={toggleVisibility} style={hideWhenVisible}>view</button>
