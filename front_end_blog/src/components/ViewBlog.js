@@ -43,21 +43,21 @@ export default function Blog({ blog, deleteBlog, currentUser }) {
   };
 
   return (
-    <div className="blog">
-      <p>
+    <div className='blog'>
+      <p className='blogTitle'>
         {blog.title} {blog.author}
-        <button onClick={toggleVisibility} style={hideWhenVisible}>view</button>
-        <button onClick={toggleVisibility} style={showWhenVisible}>hide</button>
+        <button className='viewHidden' onClick={toggleVisibility} style={hideWhenVisible}>view</button>
+        <button className='hide' onClick={toggleVisibility} style={showWhenVisible}>hide</button>
       </p>
-      <div style={showWhenVisible}>
-        <p>
+      <div className='info' style={showWhenVisible}>
+        <p className='url'>
           {blog.url}
         </p>
-        <p>
+        <p className='likes'>
           {likes}
           <button onClick={handleLikes}>Like</button>
         </p>
-        <p>
+        <p className='username'>
           {/* fix me, call the latest user */}
           {blog.user.username}
         </p>

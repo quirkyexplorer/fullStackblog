@@ -1,15 +1,13 @@
 import { useState } from 'react';
 
-export default function LoginForm({
-  handleSubmit,
-}) {
+export default function LoginForm({ handleSubmit }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const addUser = (event) => {
     event.preventDefault();
     handleSubmit({
       username,
-      password
+      password,
     });
     setUsername('');
     setPassword('');
@@ -19,27 +17,28 @@ export default function LoginForm({
       <h2>Login</h2>
       <form onSubmit={addUser}>
         <div>
-                username
+          username
           <input
-            type='text'
+            className='username'
+            type="text"
             value={username}
-            name='username'
+            name="username"
             onChange={({ target }) => setUsername(target.value)}
           />
         </div>
 
         <div>
-                password
+          password
           <input
-            type='password'
+            className='password'
+            type="password"
             value={password}
-            name='password'
+            name="password"
             onChange={({ target }) => setPassword(target.value)}
           />
         </div>
 
-        <button type='submit'>login</button>
-
+        <button type="submit">login</button>
       </form>
     </div>
   );

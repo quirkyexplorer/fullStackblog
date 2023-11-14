@@ -103,19 +103,18 @@ function App() {
       // console.log('blog to be deleted', id);
       if (window.confirm(`Please comfirm you want to delete ${title}`)) {
         blogService.blogDelete(id);
-      }
-
-      setBlogs(blogs.filter(blog => blog.id !== id));
-      setMessage({
-        text: 'blog deleted',
-        isError: false
-      });
-      setTimeout(() => {
+        setBlogs(blogs.filter(blog => blog.id !== id));
         setMessage({
-          text: '',
+          text: 'blog deleted',
           isError: false
         });
-      }, 5000);
+        setTimeout(() => {
+          setMessage({
+            text: '',
+            isError: false
+          });
+        }, 5000);
+      }
     } catch(error) {
       console.log('error',error);
     }
