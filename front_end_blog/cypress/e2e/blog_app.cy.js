@@ -106,7 +106,7 @@ describe('home page functionality', () => {
     cy.get('.username').should('be.visible');
   });
 
-  it.only('blog information can be hidden', function () {
+  it('blog information can be hidden', function () {
     cy.get('.viewHidden').click();
     cy.get('.hide').click();
     cy.get('.blog').should(($blog) => {
@@ -118,11 +118,55 @@ describe('home page functionality', () => {
     });
   });
 
-  it('blog can be liked', function () {});
+  it('blog can be liked', function () {
+    cy.get('.viewHidden').click();
+    cy.get('.likesButton').click();
+    cy.get('.likes').should('be.visible').and('contain', '1');
+    cy.get('.likesButton').click();
+    cy.get('.likes').should('be.visible').and('contain', '2');
+  });
 
-  it('blog can be removed and warning shown, then deletion cancelled', function () {});
+  it('blog can be removed and warning shown, then deletion cancelled', function () {
+    cy.get('.viewHidden').click();
+    cy.window().then((window) => {
+      cy.stub(window, 'confirm').returns(false); // Stub the window.confirm method to simulate cancellation
+      cy.get('.remove').click();
+    });
+    cy.get('.blog').should('exist');
+  });
 
-  it('blog can be removed and warning shown, then confirmed', function () {});
+  it('blog can be removed and warning shown, then confirmed', function () {
+    cy.get('.viewHidden').click();
+    cy.get('.remove').click();
+    cy.get('.blog').should('not.exist');
+  });
 
-  it('blog can be created', function () {});
+  it.only('blog can be created', function () {
+
+    const testBlog = {
+      title: 'hello world',
+      author: 'greeter of worlds',
+      url: 'printhello.com',
+      likes: 0,
+      user: {
+        username: 'zoe',
+      },
+    };
+
+    cy.get('.toggle-button').click();
+    cy.get('.createForm').should('be.visible');
+    cy.get('input[placeholder="title"]').type(testBlog.title);
+    cy.get('input[placeholder="author"]').type(testBlog.author);
+    cy.get('input[placeholder="url"]').type(testBlog.url);
+    cy.get('button[type="submit"]').click();
+    cy.get('.blog').should(($blog) => {
+      // Use find() to select child elements that match the given selector
+      const blogTitlesInViewHidden = $blog.find('.blogTitle');
+
+      // Assert that there is exactly one matching child element
+      expect(blogTitlesInViewHidden).to.have.length(2);
+    });
+
+  });
+
 });

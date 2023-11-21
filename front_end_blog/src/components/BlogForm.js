@@ -22,7 +22,7 @@ export default function BlogForm({
   return (
     <div>
       <h3>New Blog</h3>
-      <form onSubmit={addBlog}>
+      <form className='createForm' onSubmit={addBlog}>
         <div>
                     title: <input placeholder="title" value={title} onChange={({ target }) => { setTitle(target.value);}}/>
         </div>

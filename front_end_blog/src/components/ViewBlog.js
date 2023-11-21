@@ -37,7 +37,7 @@ export default function Blog({ blog, deleteBlog, currentUser }) {
       <div>
         {/* {console.log('user username',user.username, 'blog username', blog.user.username)} */}
         { user.username === blog.user.username?
-          <button onClick={handleClick}>remove</button> : null}
+          <button className='remove' onClick={handleClick}>remove</button> : null}
       </div>
     );
   };
@@ -55,7 +55,7 @@ export default function Blog({ blog, deleteBlog, currentUser }) {
         </p>
         <p className='likes'>
           {likes}
-          <button onClick={handleLikes}>Like</button>
+          <button className='likesButton' onClick={handleLikes}>Like</button>
         </p>
         <p className='username'>
           {/* fix me, call the latest user */}
