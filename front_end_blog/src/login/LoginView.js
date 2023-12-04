@@ -17,16 +17,18 @@ export default function LoginView({ handleLogin, handleLogout, user }) {
   };
 
   return (
-    <div>
-      {user === null ?
-        loginForm() :
-        <div>
+    <div className='loginContainer'>
+      <div className='loginBox'>
+        {user === null ?
+          loginForm() :
           <div>
-            <p>{user.name} logged in</p>
-            <button onClick={handleLogout}>logout</button>
+            <div>
+              <p>{user.name} logged in</p>
+              <button onClick={handleLogout}>logout</button>
+            </div>
           </div>
-        </div>
-      }
+        }
+      </div>
     </div>
   );
 }

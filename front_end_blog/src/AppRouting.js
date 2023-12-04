@@ -4,6 +4,7 @@ import blogService from './services/blogs.js';
 import loginService from './services/login.js';
 import Home from './pages/Home.js';
 import LoginView from './login/LoginView.js';
+import './App.css';
 
 export default function AppRouting() {
 
@@ -68,29 +69,33 @@ export default function AppRouting() {
     window.location.reload();
   };
 
+  const paths = () => {
+    return(
+      <div>
+        <Link style={padding} to={'/'}>Home</Link>
+        <Link style={padding} to={'/blogs'}>Blogs</Link>
+        <Link style={padding} to={'/users'}>Users</Link>
+      </div>
+    );
+  };
+
   return (
-    <div>
+    <div className='mainContainer'>
       <Router>
-        <div>
-          <Link style={padding} to={'/'}>Home</Link>
-          <Link style={padding} to={'/blogs'}>Blogs</Link>
-          <Link style={padding} to={'/users'}>Users</Link>
-        </div>
+        {user? paths() : null}
         <Routes>
           {/* <Route path='/blog/:id' element={<viewBlog />} />
           <Route path='/users' element={<Users />} /> */}
           {/* <Route path='/home' element={<Blogs />} /> */}
-          <Route path='/' element={<LoginView
+          <Route className={'login'} path='/' element={<LoginView
             handleLogin={handleLogin}
             handleLogout={handleLogout}
             user={user}
           />} />
         </Routes>
-
         <div>
           <i>Blog app, blogs about Software Engineering, created by Daniel Segura 2023</i>
         </div>
-
       </Router>
     </div>
   );
