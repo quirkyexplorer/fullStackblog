@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 export default function LoginForm({ handleSubmit }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+
   const addUser = (event) => {
     event.preventDefault();
     handleSubmit({

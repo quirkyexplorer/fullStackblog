@@ -1,35 +1,51 @@
-import { useState, useEffect, useRef } from 'react';
-import Blog from './components/ViewBlog.js';
-import blogService from './services/blogs.js';
-import loginService from './services/login.js';
-import BlogForm from './components/BlogForm.js';
-import LoginForm from './components/LoginForm.js';
-import Notification from './components/Notification.js';
-import Togglable from './components/Togglable.js';
-import './App.css';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { useState, useEffect, useRef } from "react";
+import Blog from "./components/ViewBlog.js";
+import blogService from "./services/blogs.js";
+import loginService from "./services/login.js";
+import BlogForm from "./components/BlogForm.js";
+import LoginForm from "./components/LoginForm.js";
+import Notification from "./components/Notification.js";
+import Togglable from "./components/Togglable.js";
+import "./App.css";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+
+const Menu = () => {
+  const padding = {
+    paddingRight: 5,
+  };
+  return (
+    <Router>
+      <Link style={padding} to="/blogs">Blogs</Link>
+      <Link style={padding} to="/createNew">Create New</Link>
+      <Link style={padding} to="/about">About</Link>
+      <Link style={padding} to="/">home</Link>
+
+
+      <Routes>
+        <Route path="/anecdotes" element ={''}/>
+      </Routes>
+    </Router>
+  );
+};
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
   const [message, setMessage] = useState({
-    text: '',
-    isError: false
+    text: "",
+    isError: false,
   });
   const blogFormRef = useRef();
 
   useEffect(() => {
-    blogService
-      .getAll()
-      .then(initialBlogs => {
-        setBlogs( initialBlogs );
-      }
-      );
+    blogService.getAll().then((initialBlogs) => {
+      setBlogs(initialBlogs);
+    });
   }, []);
-
+                              
   useEffect(() => {
-    const loggedUserJSON = window.localStorage.getItem('loggedBlogappUser');
-    if(loggedUserJSON) {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJSON) {
       const user = JSON.parse(loggedUserJSON);
       setUser(user);
       blogService.setToken(user.token);
@@ -40,11 +56,10 @@ function App() {
     const { username, password } = userObject;
     try {
       const user = await loginService.login({
-        username, password,
+        username,
+        password,
       });
-      window.localStorage.setItem(
-        'loggedBlogappUser', JSON.stringify(user)
-      );
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
     } catch (exception) {
@@ -52,12 +67,12 @@ function App() {
       console.log(exception);
       setMessage({
         text: `${exception.response.data.error}`,
-        isError: true
+        isError: true,
       });
       setTimeout(() => {
         setMessage({
-          text: '',
-          isError: false
+          text: "",
+          isError: false,
         });
       }, 5000);
     }
@@ -68,7 +83,7 @@ function App() {
     window.location.reload();
   };
 
-  const createBlog =  async (blogObject) => {
+  const createBlog = async (blogObject) => {
     blogFormRef.current.toggleVisibility();
     try {
       const createdBlog = await blogService.create(blogObject);
@@ -76,58 +91,55 @@ function App() {
       setBlogs(blogs.concat(createdBlog));
       setMessage({
         text: `a new blog ${createdBlog.title} by ${createdBlog.author} added`,
-        isError: false
+        isError: false,
       });
       setTimeout(() => {
         setMessage({
-          text: '',
-          isError: false
+          text: "",
+          isError: false,
         });
       }, 5000);
-    }
-    catch(error) {
+    } catch (error) {
       setMessage({
         text: `${error.response.data.error}`,
-        isError: true
+        isError: true,
       });
       setTimeout(() => {
         setMessage({
-          text: '',
-          isError: false
+          text: "",
+          isError: false,
         });
       }, 4000);
     }
   };
 
   const deleteBlog = async (id, title) => {
-    try{
+    try {
       // console.log('blog to be deleted', id);
       if (window.confirm(`Please comfirm you want to delete ${title}`)) {
         blogService.blogDelete(id);
-        setBlogs(blogs.filter(blog => blog.id !== id));
+        setBlogs(blogs.filter((blog) => blog.id !== id));
         setMessage({
-          text: 'blog deleted',
-          isError: false
+          text: "blog deleted",
+          isError: false,
         });
         setTimeout(() => {
           setMessage({
-            text: '',
-            isError: false
+            text: "",
+            isError: false,
           });
         }, 5000);
       }
-    } catch(error) {
-      console.log('error',error);
+    } catch (error) {
+      console.log("error", error);
     }
   };
 
-  const loginForm = () =>  {
+  const loginForm = () => {
     return (
-      <div >
-        <Togglable buttonLabel='login'>
-          <LoginForm
-            handleSubmit={handleLogin}
-          />
+      <div>
+        <Togglable buttonLabel="login">
+          <LoginForm handleSubmit={handleLogin} />
         </Togglable>
       </div>
     );
@@ -136,35 +148,40 @@ function App() {
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
 
   return (
-    <div>
-      <div id='header'>
-        <div className='titleWrapper'>
+    <div><Menu></Menu>
+      <div id="header">
+        <div className="titleWrapper">
           <h2 className="test">DevBlogs</h2>
         </div>
-        <input id='searchBox' placeholder='search'/>
+        <input id="searchBox" placeholder="search" />
       </div>
-      { message.text ? <Notification message={message.text} isError={message.isError} />
-        : undefined }
-      {user === null ?
-        loginForm() :
+      {message.text ? (
+        <Notification message={message.text} isError={message.isError} />
+      ) : undefined}
+      {user === null ? (
+        loginForm()
+      ) : (
         <div>
           <div>
             <p>{user.name} logged in</p>
             <button onClick={handleLogout}>logout</button>
           </div>
-          <Togglable buttonLabel='new blog' ref={blogFormRef}>
-            <BlogForm
-              createBlog={createBlog}
-            />
+          <Togglable buttonLabel="new blog" ref={blogFormRef}>
+            <BlogForm createBlog={createBlog} />
           </Togglable>
           <div>
             <h2>Blogs</h2>
             {sortedBlogs.map((blog) => (
-              <Blog key={blog.id} blog={blog} deleteBlog={deleteBlog} currentUser={user}/>
+              <Blog
+                key={blog.id}
+                blog={blog}
+                deleteBlog={deleteBlog}
+                currentUser={user}
+              />
             ))}
           </div>
         </div>
-      }
+      )}
     </div>
   );
 }
