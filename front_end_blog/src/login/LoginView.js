@@ -1,24 +1,23 @@
 import Togglable from '../components/Togglable.js';
 import LoginForm from '../components/LoginForm.js';
-
+import styled from 'styled-components'
 
 export default function LoginView({ handleLogin, handleLogout, user }) {
 
   const loginForm = () =>  {
     return (
-      <div >
-        <Togglable buttonLabel='login'>
-          <LoginForm
-            handleSubmit={handleLogin}
-          />
-        </Togglable>
-      </div>
-    );
+     
+          
+            <LoginForm
+              handleSubmit={handleLogin}
+            />
+          
+        
+    );   
   };
 
   return (
-    <div className='loginContainer'>
-      <div className='loginBox'>
+      <div >
         {user === null ?
           loginForm() :
           <div>
@@ -28,7 +27,6 @@ export default function LoginView({ handleLogin, handleLogout, user }) {
             </div>
           </div>
         }
-      </div>
-    </div>
+      </div>  
   );
 }

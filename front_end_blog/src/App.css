@@ -1,26 +1,27 @@
 body{
   position: relative;
-  background-color: hsl(0, 0%, 100%);
+  background-image: linear-gradient(to right bottom, #090512, #141224, #161a38, #14234d, #032d64);
+  display: block;
 }
 
-#header {
+/* #header {
     margin-top: 20px;
     display: flex;
     align-items: space-between;
     justify-content: baseline;
-}
+} */
 
 .titleWrapper {
     flex: 1;
     margin-bottom: 0;
     margin-left: 20px;
 }
-
+/* 
 #loginForm {
     margin-top: 7px;
     margin-left: 20px;
     margin-right: 20px;
-}
+} */
 
 #searchBox {
     height: 25px;
@@ -31,7 +32,7 @@ body{
 .blog {
     padding-top: 10px;
     padding-left: 2px;
-    border: solid;
+    
     border-width: 1px;
     margin-bottom: 5px;
 }

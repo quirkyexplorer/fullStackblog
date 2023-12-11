@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from "react";
-import Blog from "./components/ViewBlog.js";
+import Blog from "./components/BlogView.js";
 import blogService from "./services/blogs.js";
 import loginService from "./services/login.js";
 import BlogForm from "./components/BlogForm.js";
@@ -7,30 +7,16 @@ import LoginForm from "./components/LoginForm.js";
 import Notification from "./components/Notification.js";
 import Togglable from "./components/Togglable.js";
 import "./App.css";
-import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
-
-const Menu = () => {
-  const padding = {
-    paddingRight: 5,
-  };
-  return (
-    <Router>
-      <Link style={padding} to="/blogs">Blogs</Link>
-      <Link style={padding} to="/createNew">Create New</Link>
-      <Link style={padding} to="/about">About</Link>
-      <Link style={padding} to="/">home</Link>
-
-
-      <Routes>
-        <Route path="/anecdotes" element ={''}/>
-      </Routes>
-    </Router>
-  );
-};
+import Navigation from "./pages/Navigation.js";
+import LoginView from "./login/LoginView.js";
+import { Routes, Route, useNavigate, Navigate } from "react-router-dom";
+import BlogList from "./components/BlogList.js";
+import styled from 'styled-components';
 
 function App() {
   const [blogs, setBlogs] = useState([]);
   const [user, setUser] = useState(null);
+  const navigate = useNavigate();
   const [message, setMessage] = useState({
     text: "",
     isError: false,
@@ -42,7 +28,7 @@ function App() {
       setBlogs(initialBlogs);
     });
   }, []);
-                              
+
   useEffect(() => {
     const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
     if (loggedUserJSON) {
@@ -62,6 +48,7 @@ function App() {
       window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
+      navigate("/");
     } catch (exception) {
       // exception.response.data.error
       console.log(exception);
@@ -81,6 +68,7 @@ function App() {
   const handleLogout = async (event) => {
     window.localStorage.clear();
     window.location.reload();
+    navigate("/login");
   };
 
   const createBlog = async (blogObject) => {
@@ -135,31 +123,77 @@ function App() {
     }
   };
 
-  const loginForm = () => {
-    return (
-      <div>
-        <Togglable buttonLabel="login">
-          <LoginForm handleSubmit={handleLogin} />
-        </Togglable>
-      </div>
-    );
-  };
-
   const sortedBlogs = [...blogs].sort((a, b) => b.likes - a.likes);
 
   return (
-    <div><Menu></Menu>
-      <div id="header">
+    <div>
+      <Navigation ></Navigation>
+      <MainContainer id="MainContainer">
         <div className="titleWrapper">
-          <h2 className="test">DevBlogs</h2>
+          <Title className="test">DevBlogs</Title>
         </div>
-        <input id="searchBox" placeholder="search" />
-      </div>
-      {message.text ? (
+        <Routes>
+          <Route 
+            path="/"
+            element={ user ? 
+              <BlogList // if user is logged in navigate home
+                sortedBlogs={sortedBlogs}
+                deleteBlog={deleteBlog}
+                currentUser={user}
+                handleLogout={handleLogout}
+              />           :
+              <Navigate replace to="/login" />
+          } />
+
+          <Route
+            path="/login"
+            element={
+              <LoginView
+                id='loginform'
+                handleLogin={handleLogin}
+                handleLogout={handleLogout}
+                user={user}
+              />}
+          
+          />
+
+          {/* if user is not logged in, navigate to the login component */}
+          {/* {user ? (
+                <Route
+                path="/"
+                element={
+                  <BlogList // if user is logged in navigate home
+                    sortedBlogs={sortedBlogs}
+                    deleteBlog={deleteBlog}
+                    currentUser={user}
+                    handleLogout={handleLogout}
+                  />
+                }
+                />
+          ) : (
+            <Route
+              path="/login"
+              element={
+                <LoginView
+                  handleLogin={handleLogin}
+                  handleLogout={handleLogout}
+                  user={user}
+                />}
+            />
+          )} */}
+        </Routes>
+      </MainContainer>
+      
+      {/* <input id="searchBox" placeholder="search" /> */}
+      {/* {message.text ? (
         <Notification message={message.text} isError={message.isError} />
       ) : undefined}
       {user === null ? (
-        loginForm()
+        <LoginView
+          handleLogin={handleLogin}
+          handleLogout={handleLogout}
+          user={user}
+        ></LoginView>
       ) : (
         <div>
           <div>
@@ -171,19 +205,30 @@ function App() {
           </Togglable>
           <div>
             <h2>Blogs</h2>
-            {sortedBlogs.map((blog) => (
-              <Blog
-                key={blog.id}
-                blog={blog}
-                deleteBlog={deleteBlog}
-                currentUser={user}
-              />
-            ))}
+            <BlogList
+              sortedBlogs={sortedBlogs}
+              deleteBlog={deleteBlog}
+              currentUser={user}
+            />
           </div>
         </div>
-      )}
+      )} */}
     </div>
   );
 }
+
+const Title = styled.h1`
+  color: black;
+  text-shadow:
+    /* White glow */
+    0 0 7px  hsl(0, 0%, 100%),
+    0 0 10px hsl(0, 0%, 100%),
+    0 0 21px hsl(0, 0%, 100%);
+`;
+
+const MainContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
 
 export default App;
